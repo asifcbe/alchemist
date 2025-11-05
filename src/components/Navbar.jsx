@@ -1,7 +1,7 @@
 import { AppBar, Toolbar, Typography, IconButton, Box, Container, Tooltip } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { auth } from '../firebase/config';
-import { signOut } from 'firebase/auth';
+// import { auth } from '../firebase/config';
+// import { signOut } from 'firebase/auth';
 import { Store, Info, Login, Logout } from '@mui/icons-material';
 import alchemistLogo from '../assets/alchemistlogo.png';
 
@@ -9,12 +9,12 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
-    try {
-      await signOut(auth);
+    // try {
+    //   await signOut(auth);
       navigate('/login');
-    } catch (error) {
-      console.error('Error logging out:', error);
-    }
+    // } catch (error) {
+    //   console.error('Error logging out:', error);
+    // }
   };
 
   return (
@@ -130,7 +130,8 @@ const Navbar = () => {
               </Typography>
             </Box>
 
-            {auth.currentUser ? (
+            {/* {auth.currentUser ? ( */}
+            {false ? (
               <Box
                 onClick={handleLogout}
                 sx={{

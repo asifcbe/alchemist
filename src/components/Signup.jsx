@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Box, Typography, TextField, Button, Paper, Container } from '@mui/material';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebase/config';
+// import { createUserWithEmailAndPassword } from 'firebase/auth';
+// import { auth } from '../firebase/config';
 import { useNavigate } from 'react-router-dom';
 
 const Signup = () => {
@@ -13,17 +13,17 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
-    try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      navigate('/');
-    } catch (error) {
-      setError(error.message);
-      console.error('Error signing up:', error);
-    }
+    // if (password !== confirmPassword) {
+    //   setError('Passwords do not match');
+    //   return;
+    // }
+    // try {
+    //   await createUserWithEmailAndPassword(auth, email, password);
+    //   navigate('/');
+    // } catch (error) {
+    //   setError(error.message);
+    //   console.error('Error signing up:', error);
+    // }
   };
 
   return (

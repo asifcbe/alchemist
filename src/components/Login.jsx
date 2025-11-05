@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Box, Typography, TextField, Button, Paper, Container } from '@mui/material';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebase/config';
+// import { signInWithEmailAndPassword } from 'firebase/auth';
+// import { auth } from '../firebase/config';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
@@ -12,13 +12,13 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
+    // try {
+    //   await signInWithEmailAndPassword(auth, email, password);
       navigate('/');
-    } catch (error) {
-      setError('Invalid email or password');
-      console.error('Error logging in:', error);
-    }
+    // } catch (error) {
+    //   setError('Invalid email or password');
+    //   console.error('Error logging in:', error);
+    // }
   };
 
   return (

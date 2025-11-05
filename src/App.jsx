@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { ThemeProvider, createTheme, Box } from '@mui/material';
+import { ThemeProvider, createTheme, Box, Container } from '@mui/material';
 import './App.css';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -53,7 +53,7 @@ function App() {
                 flexDirection: 'column'
               }}
             >
-              <Box sx={{ flex: 1, px: { xs: 2, sm: 3, md: 4 } }}>
+              <Container maxWidth="lg" sx={{ flex: 1, px: { xs: 2, sm: 3, md: 4 } }}>
                 <Routes>
                   <Route path="/" element={<Home />} />
                   <Route path="/login" element={<Login />} />
@@ -64,7 +64,7 @@ function App() {
                   <Route path="/terms" element={<div>Terms & Conditions</div>} />
                   <Route path="/contact" element={<div>Contact Us</div>} />
                 </Routes>
-              </Box>
+              </Container>
               <Footer />
             </Box>
           </Box>
