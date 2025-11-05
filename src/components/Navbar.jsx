@@ -19,13 +19,15 @@ const Navbar = () => {
 
   return (
     <AppBar 
-      position="static" 
+      position="fixed" 
       color="transparent" 
       elevation={0} 
       sx={{ 
         borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
         width: '100%',
-        overflowX: 'hidden'
+        overflowX: 'hidden',
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        backdropFilter: 'blur(8px)'
       }}
     >
       <Container 
