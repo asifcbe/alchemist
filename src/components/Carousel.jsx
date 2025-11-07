@@ -51,7 +51,8 @@ const Carousel = ({ items = [], autoPlay = true, autoPlayInterval = 2000, height
   };
 
   return (
-    <Box sx={{ position: 'relative', width: '100%', overflow: 'hidden', borderRadius: 2 }}>
+    <div className='carousel'>
+    <Box sx={{ position: 'relative', width: '100%', overflow: 'hidden', borderRadius: 2, }}>
       <Box
         onMouseEnter={stop}
         onMouseLeave={start}
@@ -69,14 +70,14 @@ const Carousel = ({ items = [], autoPlay = true, autoPlayInterval = 2000, height
         }}
       >
         {items.map((it, i) => (
-          <Box key={it.id ?? i} sx={{ width: `${100 / (items.length || 1)}%`, flexShrink: 0 }}>
+          <Box key={it.id ?? i} sx={{ width: `${100 / (items.length || 1)}%`, flexShrink: 0}}>
             <Box sx={{ width: '100%', height: '100%', position: 'relative' }}>
               <img
                 src={it.imageUrl}
                 alt={it.name}
                 style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
               />
-              <Box sx={{ position: 'absolute', left: 16, bottom: 16, color: 'common.white', textShadow: '0 6px 18px rgba(0,0,0,0.6)' }}>
+              <Box sx={{ position: 'absolute', left: 16, bottom: 16, color: 'common.white !important', textShadow: '0 6px 18px rgba(0,0,0,0.6)' }}>
                 <Typography variant="h5" sx={{ fontWeight: 400 }}>{it.name}</Typography>
                 <Typography variant="body2">{it.description}</Typography>
               </Box>
@@ -117,6 +118,7 @@ const Carousel = ({ items = [], autoPlay = true, autoPlayInterval = 2000, height
         </>
       )}
     </Box>
+    </div>
   );
 };
 

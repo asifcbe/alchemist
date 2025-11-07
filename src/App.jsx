@@ -12,7 +12,6 @@ import { CartProvider } from './context/CartContext';
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
 
-
 // Create a black and white theme
 const theme = createTheme({
   palette: {
@@ -45,36 +44,56 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <AuthProvider>
-      <CartProvider>
-        <Router>
-          <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-            <Navbar />
+        <CartProvider>
+          <Router>
+            <div className='app'>
             <Box 
-              component="main" 
               sx={{ 
-                pt: { xs: '56px', sm: '64px' },
-                flex: 1,
-                display: 'flex',
-                flexDirection: 'column'
+                minHeight: '100vh', 
+                display: 'flex', 
+                flexDirection: 'column', 
+                alignItems: 'center'  // Center entire app horizontally
               }}
             >
-              <Container maxWidth="lg" sx={{ flex: 1, px: { xs: 2, sm: 3, md: 4 } }}>
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/signup" element={<Signup />} />
-                  <Route path="/products" element={<Products />} />
-                  <Route path="/shipping-delivery" element={<div>Shipping & Delivery</div>} />
-                  <Route path="/refund-policy" element={<div>Refund & Cancellation Policy</div>} />
-                  <Route path="/terms" element={<div>Terms & Conditions</div>} />
-                  <Route path="/contact" element={<div>Contact Us</div>} />
-                </Routes>
-              </Container>
-              <Footer />
+              <Navbar />
+              <Box 
+                component="main" 
+                sx={{ 
+                  pt: { xs: '56px', sm: '64px' },
+                  flex: 1,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center' // Center main content horizontally
+                }}
+              >
+                <Container 
+                  maxWidth="lg" 
+                  sx={{ 
+                    flex: 1, 
+                    px: { xs: 2, sm: 3, md: 4 }, 
+                    marginX: 'auto', 
+                    display: 'flex', 
+                    flexDirection: 'column',
+                    alignItems: 'center' // Make inner container content centered too
+                  }}
+                >
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/signup" element={<Signup />} />
+                    <Route path="/products" element={<Products />} />
+                    <Route path="/shipping-delivery" element={<div>Shipping & Delivery</div>} />
+                    <Route path="/refund-policy" element={<div>Refund & Cancellation Policy</div>} />
+                    <Route path="/terms" element={<div>Terms & Conditions</div>} />
+                    <Route path="/contact" element={<div>Contact Us</div>} />
+                  </Routes>
+                </Container>
+                <Footer />
+              </Box>
             </Box>
-          </Box>
-        </Router>
-      </CartProvider>
+            </div>
+          </Router>
+        </CartProvider>
       </AuthProvider>
     </ThemeProvider>
   );
