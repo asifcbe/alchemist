@@ -77,9 +77,6 @@ const Products = () => {
             Discover our exquisite range of handcrafted fragrances
           </Typography>
         </Box>
-        <IconButton onClick={() => setIsCartOpen(true)} sx={{ bgcolor: 'black', color: 'white', '&:hover': { bgcolor: '#333' } }}>
-          <ShoppingCartIcon />
-        </IconButton>
       </Box>
       
       <Grid container spacing={4}>

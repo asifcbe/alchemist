@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, createTheme, Box, Container } from '@mui/material';
+import { AuthProvider } from './context/AuthContext';
 import './App.css';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -8,6 +9,9 @@ import Login from './components/Login';
 import Signup from './components/Signup';
 import Products from './components/Products';
 import { CartProvider } from './context/CartContext';
+import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick-theme.css";
+
 
 // Create a black and white theme
 const theme = createTheme({
@@ -40,6 +44,7 @@ const theme = createTheme({
 function App() {
   return (
     <ThemeProvider theme={theme}>
+      <AuthProvider>
       <CartProvider>
         <Router>
           <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -70,6 +75,7 @@ function App() {
           </Box>
         </Router>
       </CartProvider>
+      </AuthProvider>
     </ThemeProvider>
   );
 }
