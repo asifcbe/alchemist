@@ -30,7 +30,7 @@ export const products = [
     description: 'An opulent combination of rare oud wood, royal rose, and sandalwood.',
     basePrice: 189.99,
     variants: [
-      { size: 10, price: 499 },
+      { size: 10, price: 799 },
       { size: 20, price: 999 },
       { size: 50, price: 2999 }
     ],
