@@ -1,3 +1,8 @@
+import image1 from '../assets/perfume/premium.jpg';
+import image2 from '../assets/perfume/middle.jpg';
+import image3 from '../assets/perfume/affordable.jpg';
+export const currency = 'INR';
+export const shippingCost = 50;
 export const products = [
   {
     id: '1',
@@ -5,11 +10,11 @@ export const products = [
     description: 'A mysterious blend of dark vanilla, black orchid, and amber, perfect for evening wear.',
     basePrice: 129.99,
     variants: [
-      { size: 10, price: 49.99 },
-      { size: 20, price: 89.99 },
-      { size: 50, price: 129.99 }
+      { size: 10, price: 499 },
+      { size: 20, price: 999 },
+      { size: 50, price: 2999 }
     ],
-    imageUrl: 'https://picsum.photos/seed/midnight/800/1200',
+    imageUrl: image1,
     category: 'Oriental',
     inStock: true,
     featured: true,
@@ -25,11 +30,11 @@ export const products = [
     description: 'An opulent combination of rare oud wood, royal rose, and sandalwood.',
     basePrice: 189.99,
     variants: [
-      { size: 10, price: 69.99 },
-      { size: 20, price: 119.99 },
-      { size: 50, price: 189.99 }
+      { size: 10, price: 499 },
+      { size: 20, price: 999 },
+      { size: 50, price: 2999 }
     ],
-    imageUrl: 'https://picsum.photos/seed/royal/800/1200',
+    imageUrl: image2,
     category: 'Woody',
     inStock: true,
     featured: true,
@@ -45,11 +50,11 @@ export const products = [
     description: 'A delicate harmony of jasmine, lily of the valley, and white musk.',
     basePrice: 149.99,
     variants: [
-      { size: 10, price: 59.99 },
-      { size: 20, price: 99.99 },
-      { size: 50, price: 149.99 }
+      { size: 10, price: 499},
+      { size: 20, price: 999 },
+      { size: 50, price: 2999 }
     ],
-    imageUrl: 'https://picsum.photos/seed/jasmine/800/1200',
+    imageUrl: image3,
     category: 'Floral',
     inStock: true,
     featured: true,

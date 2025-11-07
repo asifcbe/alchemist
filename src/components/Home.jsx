@@ -9,6 +9,12 @@ import image2 from '../assets/perfumehistory/2.jpg';
 import image3 from '../assets/perfumehistory/3.jpg';
 import image4 from '../assets/perfumehistory/4.jpg';
 import image5 from '../assets/perfumehistory/5.jpg';
+import image6 from '../assets/perfumehistory/6.jpg';
+import image7 from '../assets/perfumehistory/7.jpg';
+import image8 from '../assets/perfumehistory/8.jpg';
+import image9 from '../assets/perfumehistory/9.jpg';
+import image10 from '../assets/perfumehistory/10.jpg';
+
 const Home = () => {
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const theme = useTheme();
@@ -48,28 +54,28 @@ const Home = () => {
       period: "Ancient Origins",
       year: "3000 BC",
       description: "The earliest recorded perfumes originate from ancient Mesopotamia and Egypt, where they were used in religious ceremonies and burial rituals.",
-      image: image1,
+      image: image6,
       color: "#f5f5f5"
     },
     {
       period: "Islamic Golden Age",
       year: "800 AD",
       description: "Persian chemist Al-Kindi wrote the Book of the Chemistry of Perfume and Distillations, documenting 107 recipes for perfumes.",
-      image: image2,
+      image: image7,
       color: "#e0e0e0"
     },
     {
       period: "Renaissance Europe",
       year: "14th Century",
       description: "Perfume making flourished in Renaissance Europe, particularly in France, where Grasse became the perfume capital of the world.",
-      image: image3,
+      image: image8,
       color: "#f5f5f5"
     },
     {
       period: "Modern Perfumery",
       year: "19th Century",
       description: "The development of synthetic chemistry allowed for new fragrance compounds, revolutionizing perfume creation and making fine fragrances more accessible.",
-      image: image4,
+      image: image9,
       color: "#e0e0e0"
     }
   ];
@@ -283,7 +289,7 @@ const Home = () => {
                 }}
               >
                 <img 
-                  src={image5}
+                  src={image10}
                   alt="Modern Perfumery"
                   style={{
                     width: '100%',

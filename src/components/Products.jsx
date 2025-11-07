@@ -17,7 +17,6 @@ import {
   Paper
 } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import { products } from '../config/products';
 import { useCart } from '../context/CartContext';
 import Cart from './Cart';
@@ -35,7 +34,6 @@ const Products = () => {
       setIsCartOpen(true);
       return;
     }
-    
     dispatch({
       type: 'ADD_TO_CART',
       payload: {
@@ -46,6 +44,26 @@ const Products = () => {
       }
     });
     setIsCartOpen(true);
+  };
+
+  const handleSizeChange = (item, newSize) => {
+    if (!newSize || newSize === item.size) return;
+
+    const newVariant = item.variants.find(v => v.size === newSize);
+    if (!newVariant) return;
+
+    dispatch({
+      type: 'UPDATE_VARIANT',
+      payload: {
+        oldVariantId: item.variantId,
+        newVariant: {
+          ...item,
+          size: newSize,
+          price: newVariant.price,
+          variantId: `${item.id}-${newSize}`
+        }
+      }
+    });
   };
 
   return (
@@ -59,16 +77,7 @@ const Products = () => {
             Discover our exquisite range of handcrafted fragrances
           </Typography>
         </Box>
-        <IconButton 
-          onClick={() => setIsCartOpen(true)}
-          sx={{ 
-            bgcolor: 'black',
-            color: 'white',
-            '&:hover': {
-              bgcolor: '#333'
-            }
-          }}
-        >
+        <IconButton onClick={() => setIsCartOpen(true)} sx={{ bgcolor: 'black', color: 'white', '&:hover': { bgcolor: '#333' } }}>
           <ShoppingCartIcon />
         </IconButton>
       </Box>
@@ -76,30 +85,8 @@ const Products = () => {
       <Grid container spacing={4}>
         {products.map((product) => (
           <Grid item key={product.id} xs={12} sm={6} md={4}>
-            <Card 
-              elevation={0} 
-              sx={{ 
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                borderRadius: 2,
-                overflow: 'hidden',
-                transition: 'all 0.3s ease-in-out',
-                '&:hover': {
-                  boxShadow: '0 8px 40px rgba(0,0,0,0.12)',
-                  transform: 'translateY(-4px)'
-                }
-              }}
-            >
-              <CardMedia
-                component="img"
-                image={product.imageUrl}
-                alt={product.name}
-                sx={{ 
-                  height: 300,
-                  objectFit: 'cover'
-                }}
-              />
+            <Card elevation={0} sx={{ height: '100%', display: 'flex', flexDirection: 'column', borderRadius: 2, overflow: 'hidden', transition: 'all 0.3s ease-in-out', '&:hover': { boxShadow: '0 8px 40px rgba(0,0,0,0.12)', transform: 'translateY(-4px)' } }}>
+              <CardMedia component="img" image={product.imageUrl} alt={product.name} sx={{ height: 300, objectFit: 'cover' }} />
               <CardContent sx={{ flexGrow: 1, p: 3 }}>
                 <Typography variant="h5" component="h2" sx={{ fontFamily: "'Cormorant Garamond', serif", mb: 1 }}>
                   {product.name}
@@ -110,23 +97,12 @@ const Products = () => {
                 <Typography variant="body2" color="text.secondary" paragraph>
                   {product.description}
                 </Typography>
-                
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
-                  <Typography variant="h6">
-                    From ${product.variants[0].price}
-                  </Typography>
+                  <Typography variant="h6">From ₹{product.variants[0].price}</Typography>
                   <Button 
                     variant={isInCart(product.id) ? "outlined" : "contained"}
                     startIcon={isInCart(product.id) ? <ShoppingCartIcon /> : null}
-                    sx={{ 
-                      bgcolor: isInCart(product.id) ? 'transparent' : 'black',
-                      color: isInCart(product.id) ? 'black' : 'white',
-                      borderColor: 'black',
-                      '&:hover': {
-                        bgcolor: isInCart(product.id) ? 'rgba(0,0,0,0.05)' : '#333',
-                        borderColor: 'black'
-                      }
-                    }}
+                    sx={{ bgcolor: isInCart(product.id) ? 'transparent' : 'black', color: isInCart(product.id) ? 'black' : 'white', borderColor: 'black', '&:hover': { bgcolor: isInCart(product.id) ? 'rgba(0,0,0,0.05)' : '#333', borderColor: 'black' } } }
                     onClick={() => handleAddToCart(product)}
                   >
                     {isInCart(product.id) ? 'View Cart' : 'Add to Cart'}
