@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   AppBar,
   Toolbar,
@@ -10,15 +10,15 @@ import {
   Avatar,
   Menu,
   MenuItem,
-} from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { Store, Login, Logout } from '@mui/icons-material';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import alchemistLogo from '../assets/alchemistlogonew.png';
-import { useAuth } from '../context/AuthContext'; // Adjust path as needed
-import { auth } from '../firebase/config.js';
-import { signOut } from 'firebase/auth';
-import Cart from './Cart'; // Import Cart component
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { Store, Login, Logout } from "@mui/icons-material";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import alchemistLogo from "../assets/alchemistlogonew.png";
+import { useAuth } from "../context/AuthContext"; // Adjust path as needed
+import { auth } from "../firebase/config.js";
+import { signOut } from "firebase/auth";
+import Cart from "./Cart"; // Import Cart component
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -37,9 +37,9 @@ const Navbar = () => {
     try {
       await signOut(auth);
       handleMenuClose();
-      navigate('/login');
+      navigate("/login");
     } catch (error) {
-      console.error('Error logging out:', error);
+      console.error("Error logging out:", error);
     }
   };
 
@@ -50,59 +50,69 @@ const Navbar = () => {
         color="transparent"
         elevation={0}
         sx={{
-          borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
-          width: '100%',
-          overflowX: 'hidden',
-          backgroundColor: 'rgba(255, 255, 255, 0.95)',
-          backdropFilter: 'blur(8px)',
+          borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
+          width: "100%",
+          overflowX: "hidden",
+          backgroundColor: "rgba(255, 255, 255, 0.95)",
+          backdropFilter: "blur(8px)",
         }}
       >
-        <Container maxWidth="lg" disableGutters sx={{ px: { xs: 1, sm: 2, md: 3 } }}>
+        <Container
+          maxWidth="lg"
+          disableGutters
+          sx={{ px: { xs: 1, sm: 2, md: 3 } }}
+        >
           <Toolbar
             disableGutters
             sx={{
-              minHeight: { xs: '56px', sm: '64px' },
+              minHeight: { xs: "56px", sm: "64px" },
               py: { xs: 0.5, sm: 1 },
               gap: { xs: 1, sm: 2 },
-              width: '100%',
-              justifyContent: 'space-between',
+              width: "100%",
+              justifyContent: "space-between",
             }}
           >
             {/* Logo & Title */}
             <Box
               sx={{
-                display: 'flex',
-                alignItems: 'center',
-                cursor: 'pointer',
-                '&:hover': { opacity: 0.9 },
-                flex: { xs: '0 1 auto', sm: '0 0 auto' },
+                display: "flex",
+                alignItems: "center",
+                cursor: "pointer",
+                "&:hover": { opacity: 0.9 },
+                flex: { xs: "0 1 auto", sm: "0 0 auto" },
               }}
-              onClick={() => navigate('/')}
+              onClick={() => navigate("/")}
             >
               <img
                 src={alchemistLogo}
                 alt="Al Chemist Logo"
                 style={{
-                  height: '50px',
-                  marginRight: '8px',
-                  width: 'auto',
-                  borderRadius: '50%',
-                  transition: 'transform 0.3s ease',
+                  height: "50px",
+                  marginRight: "8px",
+                  width: "auto",
+                  borderRadius: "50%",
+                  transition: "transform 0.3s ease",
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.1)')}
-                onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.transform = "scale(1.1)")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.transform = "scale(1)")
+                }
               />
               <Typography
                 sx={{
-                  fontFamily: "'Cinzel Decorative', 'Cormorant Garamond', serif",
-                  fontSize: { xs: '1rem', sm: '1.3rem', md: '1.5rem' },
-                  letterSpacing: { xs: '0.1em', sm: '0.15em' },
-                  background: 'linear-gradient(45deg, #1a1a1a 30%, #4a4a4a 90%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  textTransform: 'uppercase',
+                  fontFamily:
+                    "'Cinzel Decorative', 'Cormorant Garamond', serif",
+                  fontSize: { xs: "1rem", sm: "1.3rem", md: "1.5rem" },
+                  letterSpacing: { xs: "0.1em", sm: "0.15em" },
+                  background:
+                    "linear-gradient(45deg, #1a1a1a 30%, #4a4a4a 90%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  textTransform: "uppercase",
                   fontWeight: 700,
-                  whiteSpace: 'nowrap',
+                  whiteSpace: "nowrap",
                 }}
               >
                 Al-Chemist
@@ -110,32 +120,55 @@ const Navbar = () => {
             </Box>
 
             {/* User & Shop & Cart */}
-            <Box sx={{ display: 'flex', gap: { xs: 1, sm: 2 }, alignItems: 'center' }}>
+            <Box
+              sx={{
+                display: "flex",
+                gap: { xs: 1, sm: 2 },
+                alignItems: "center",
+              }}
+            >
               {/* Shop Button */}
               <Box
-                onClick={() => navigate('/products')}
+                onClick={() => navigate("/products")}
                 sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  cursor: 'pointer',
-                  '&:hover': {
-                    '& .MuiIconButton-root': { backgroundColor: 'rgba(0, 0, 0, 0.05)' },
-                    '& .MuiTypography-root': { color: 'rgba(0, 0, 0, 0.7)' },
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  "&:hover": {
+                    "& .MuiIconButton-root": {
+                      backgroundColor: "rgba(0, 0, 0, 0.05)",
+                    },
+                    "& .MuiTypography-root": { color: "rgba(0, 0, 0, 0.7)" },
                   },
                 }}
               >
-                <IconButton color="inherit" sx={{ padding: { xs: '8px', sm: '12px' } }}>
-                  <Store sx={{ fontSize: { xs: '1.5rem', sm: '1.75rem' } }} />
+                <IconButton
+                  disableFocusRipple
+                  disableRipple
+                  color="inherit"
+                  sx={{
+                    padding: { xs: "8px", sm: "12px" },
+                    "&:focus-visible": {
+                      outline: "none",
+                      boxShadow: "none",
+                    },
+                    "&:active": {
+                      outline: "none",
+                      boxShadow: "none",
+                    },
+                  }}
+                >
+                  <Store sx={{ fontSize: { xs: "1.5rem", sm: "1.75rem" } }} />
                 </IconButton>
                 <Typography
                   sx={{
-                    fontSize: { xs: '0.7rem', sm: '0.8rem' },
+                    fontSize: { xs: "0.7rem", sm: "0.8rem" },
                     fontFamily: "'Cormorant Garamond', serif",
                     mt: -1,
-                    color: 'rgba(0, 0, 0, 0.6)',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
+                    color: "rgba(0, 0, 0, 0.6)",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.05em",
                   }}
                 >
                   Shop
@@ -144,35 +177,42 @@ const Navbar = () => {
 
               {/* Cart IconButton */}
               <Box>
-              <IconButton
-                onClick={() => setIsCartOpen(true)}
-                color="inherit"
-                sx={{ padding: { xs: '8px', sm: '12px' } }}
-                aria-label="Open Cart"
-              >
-                <ShoppingCartIcon sx={{ fontSize: { xs: '1.5rem', sm: '1.75rem' } }} />
-              </IconButton>
-              <Typography
+                <IconButton
+                  disableRipple
+                  onClick={() => setIsCartOpen(true)}
+                  color="inherit"
+                  sx={{ padding: { xs: "8px", sm: "12px" } }}
+                  aria-label="Open Cart"
+                >
+                  <ShoppingCartIcon
+                    sx={{ fontSize: { xs: "1.5rem", sm: "1.75rem" } }}
+                  />
+                </IconButton>
+                <Typography
                   sx={{
-                    fontSize: { xs: '0.7rem', sm: '0.8rem' },
+                    fontSize: { xs: "0.7rem", sm: "0.8rem" },
                     fontFamily: "'Cormorant Garamond', serif",
                     mt: -1,
-                    color: 'rgba(0, 0, 0, 0.6)',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
+                    color: "rgba(0, 0, 0, 0.6)",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.05em",
                   }}
                 >
                   Cart
                 </Typography>
-</Box>
+              </Box>
               {/* User Avatar & Logout menu */}
               {currentUser ? (
                 <>
-                  <Tooltip title={currentUser.displayName || 'User'}>
-                    <IconButton onClick={handleAvatarClick} sx={{ padding: 0 }}>
+                  <Tooltip title={currentUser.displayName || "User"}>
+                    <IconButton
+                      disableRipple
+                      onClick={handleAvatarClick}
+                      sx={{ padding: 0 }}
+                    >
                       <Avatar
-                        src={currentUser.photoURL || ''}
-                        alt={currentUser.displayName || 'User'}
+                        src={currentUser.photoURL || ""}
+                        alt={currentUser.displayName || "User"}
                         sx={{ width: 40, height: 40 }}
                       />
                     </IconButton>
@@ -181,8 +221,8 @@ const Navbar = () => {
                     anchorEl={anchorEl}
                     open={Boolean(anchorEl)}
                     onClose={handleMenuClose}
-                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                    transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                    transformOrigin={{ vertical: "top", horizontal: "right" }}
                   >
                     <MenuItem onClick={handleLogout}>
                       <Logout fontSize="small" sx={{ marginRight: 1 }} />
@@ -192,29 +232,35 @@ const Navbar = () => {
                 </>
               ) : (
                 <Box
-                  onClick={() => navigate('/login')}
+                  onClick={() => navigate("/login")}
                   sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    cursor: 'pointer',
-                    '&:hover': {
-                      '& .MuiIconButton-root': { backgroundColor: 'rgba(0, 0, 0, 0.05)' },
-                      '& .MuiTypography-root': { color: 'rgba(0, 0, 0, 0.7)' },
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    cursor: "pointer",
+                    "&:hover": {
+                      "& .MuiIconButton-root": {
+                        backgroundColor: "rgba(0, 0, 0, 0.05)",
+                      },
+                      "& .MuiTypography-root": { color: "rgba(0, 0, 0, 0.7)" },
                     },
                   }}
                 >
-                  <IconButton color="inherit" sx={{ padding: { xs: '8px', sm: '12px' } }}>
-                    <Login sx={{ fontSize: { xs: '1.5rem', sm: '1.75rem' } }} />
+                  <IconButton
+                    disableRipple
+                    color="inherit"
+                    sx={{ padding: { xs: "8px", sm: "12px" } }}
+                  >
+                    <Login sx={{ fontSize: { xs: "1.5rem", sm: "1.75rem" } }} />
                   </IconButton>
                   <Typography
                     sx={{
-                      fontSize: { xs: '0.7rem', sm: '0.8rem' },
+                      fontSize: { xs: "0.7rem", sm: "0.8rem" },
                       fontFamily: "'Cormorant Garamond', serif",
                       mt: -1,
-                      color: 'rgba(0, 0, 0, 0.6)',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.05em',
+                      color: "rgba(0, 0, 0, 0.6)",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em",
                     }}
                   >
                     Log In
