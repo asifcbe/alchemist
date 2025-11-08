@@ -15,24 +15,26 @@ import { useNavigate } from "react-router-dom";
 import { Store, Login, Logout } from "@mui/icons-material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import alchemistLogo from "../assets/alchemistlogonew.png";
-import { useAuth } from "../context/AuthContext"; // Adjust path as needed
+import { useAuth } from "../context/AuthContext";
 import { auth } from "../firebase/config.js";
 import { signOut } from "firebase/auth";
-import Cart from "./Cart"; // Import Cart component
+import Cart from "./Cart";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
 
   const [anchorEl, setAnchorEl] = useState(null);
-  const [isCartOpen, setIsCartOpen] = useState(false); // State for cart visibility
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   const handleAvatarClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
+
   const handleLogout = async () => {
     try {
       await signOut(auth);
@@ -41,6 +43,16 @@ const Navbar = () => {
     } catch (error) {
       console.error("Error logging out:", error);
     }
+  };
+
+  const handleMyOrders = () => {
+    handleMenuClose();
+    navigate("/my-orders");
+  };
+
+  const handleAdminDashboard = () => {
+    handleMenuClose();
+    navigate("/admin");
   };
 
   return (
@@ -57,11 +69,7 @@ const Navbar = () => {
           backdropFilter: "blur(8px)",
         }}
       >
-        <Container
-          maxWidth="lg"
-          disableGutters
-          sx={{ px: { xs: 1, sm: 2, md: 3 } }}
-        >
+        <Container maxWidth="lg" disableGutters sx={{ px: { xs: 1, sm: 2, md: 3 } }}>
           <Toolbar
             disableGutters
             sx={{
@@ -93,21 +101,15 @@ const Navbar = () => {
                   borderRadius: "50%",
                   transition: "transform 0.3s ease",
                 }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.transform = "scale(1.1)")
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.transform = "scale(1)")
-                }
+                onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.1)")}
+                onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
               />
               <Typography
                 sx={{
-                  fontFamily:
-                    "'Cinzel Decorative', 'Cormorant Garamond', serif",
+                  fontFamily: "'Cinzel Decorative', 'Cormorant Garamond', serif",
                   fontSize: { xs: "1rem", sm: "1.3rem", md: "1.5rem" },
                   letterSpacing: { xs: "0.1em", sm: "0.15em" },
-                  background:
-                    "linear-gradient(45deg, #1a1a1a 30%, #4a4a4a 90%)",
+                  background: "linear-gradient(45deg, #1a1a1a 30%, #4a4a4a 90%)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                   textTransform: "uppercase",
@@ -136,9 +138,7 @@ const Navbar = () => {
                   alignItems: "center",
                   cursor: "pointer",
                   "&:hover": {
-                    "& .MuiIconButton-root": {
-                      backgroundColor: "rgba(0, 0, 0, 0.05)",
-                    },
+                    "& .MuiIconButton-root": { backgroundColor: "rgba(0, 0, 0, 0.05)" },
                     "& .MuiTypography-root": { color: "rgba(0, 0, 0, 0.7)" },
                   },
                 }}
@@ -147,17 +147,7 @@ const Navbar = () => {
                   disableFocusRipple
                   disableRipple
                   color="inherit"
-                  sx={{
-                    padding: { xs: "8px", sm: "12px" },
-                    "&:focus-visible": {
-                      outline: "none",
-                      boxShadow: "none",
-                    },
-                    "&:active": {
-                      outline: "none",
-                      boxShadow: "none",
-                    },
-                  }}
+                  sx={{ padding: { xs: "8px", sm: "12px" } }}
                 >
                   <Store sx={{ fontSize: { xs: "1.5rem", sm: "1.75rem" } }} />
                 </IconButton>
@@ -184,9 +174,7 @@ const Navbar = () => {
                   sx={{ padding: { xs: "8px", sm: "12px" } }}
                   aria-label="Open Cart"
                 >
-                  <ShoppingCartIcon
-                    sx={{ fontSize: { xs: "1.5rem", sm: "1.75rem" } }}
-                  />
+                  <ShoppingCartIcon sx={{ fontSize: { xs: "1.5rem", sm: "1.75rem" } }} />
                 </IconButton>
                 <Typography
                   sx={{
@@ -201,15 +189,12 @@ const Navbar = () => {
                   Cart
                 </Typography>
               </Box>
+
               {/* User Avatar & Logout menu */}
               {currentUser ? (
                 <>
                   <Tooltip title={currentUser.displayName || "User"}>
-                    <IconButton
-                      disableRipple
-                      onClick={handleAvatarClick}
-                      sx={{ padding: 0 }}
-                    >
+                    <IconButton disableRipple onClick={handleAvatarClick} sx={{ padding: 0 }}>
                       <Avatar
                         src={currentUser.photoURL || ""}
                         alt={currentUser.displayName || "User"}
@@ -224,6 +209,10 @@ const Navbar = () => {
                     anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                     transformOrigin={{ vertical: "top", horizontal: "right" }}
                   >
+                    <MenuItem onClick={handleMyOrders}>My Orders</MenuItem>
+                    {currentUser.email === "asifasifcbe@gmail.com" && (
+                      <MenuItem onClick={handleAdminDashboard}>Dashboard</MenuItem>
+                    )}
                     <MenuItem onClick={handleLogout}>
                       <Logout fontSize="small" sx={{ marginRight: 1 }} />
                       Log Out
@@ -239,9 +228,7 @@ const Navbar = () => {
                     alignItems: "center",
                     cursor: "pointer",
                     "&:hover": {
-                      "& .MuiIconButton-root": {
-                        backgroundColor: "rgba(0, 0, 0, 0.05)",
-                      },
+                      "& .MuiIconButton-root": { backgroundColor: "rgba(0, 0, 0, 0.05)" },
                       "& .MuiTypography-root": { color: "rgba(0, 0, 0, 0.7)" },
                     },
                   }}
@@ -272,7 +259,6 @@ const Navbar = () => {
         </Container>
       </AppBar>
 
-      {/* Cart component rendered here */}
       <Cart open={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </>
   );

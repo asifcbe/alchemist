@@ -22,7 +22,7 @@ const Footer = () => {
       sx={{
         bgcolor: 'transparent',
         borderTop: '1px solid rgba(0, 0, 0, 0.1)',
-        mt: 'auto',
+        mt: '30px',
         py: 4,
       }}
     >

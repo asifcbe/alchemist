@@ -9,6 +9,9 @@
 .carousel h5,p {
   color:#ffffff;
  }
+ p{
+  color:#000000;
+ }
 html, body {
   width: 100%;
   overflow-x: hidden;

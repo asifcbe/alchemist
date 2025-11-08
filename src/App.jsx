@@ -11,6 +11,8 @@ import Products from './components/Products';
 import { CartProvider } from './context/CartContext';
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
+import UserOrders from './components/UserOrders';
+import AdminDashboard from './components/AdminDashboard';
 
 // Create a black and white theme
 const theme = createTheme({
@@ -82,6 +84,8 @@ function App() {
                     <Route path="/login" element={<Login />} />
                     <Route path="/signup" element={<Signup />} />
                     <Route path="/products" element={<Products />} />
+                    <Route path="/my-orders" element={<UserOrders />} />
+                    <Route path="/admin" element={<AdminDashboard />} />
                     <Route path="/shipping-delivery" element={<div>Shipping & Delivery</div>} />
                     <Route path="/refund-policy" element={<div>Refund & Cancellation Policy</div>} />
                     <Route path="/terms" element={<div>Terms & Conditions</div>} />
