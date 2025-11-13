@@ -28,7 +28,7 @@ import image10 from "../assets/perfumehistory/10.jpg";
 import Quotes from "./Quotes";
 
 // Video import
-import adVideo from "../assets/Ad/ad.mp4";
+import adVideo from "../assets/Ad/Ad.mp4";
 
 const Home = () => {
   const [featuredProducts, setFeaturedProducts] = useState([]);
