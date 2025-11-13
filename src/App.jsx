@@ -13,6 +13,11 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import UserOrders from './components/UserOrders';
 import AdminDashboard from './components/AdminDashboard';
+import PrivacyPolicy from './components/PrivacyPolicy';
+import ShippingDelivery from './components/ShippingDelivery';
+import RefundCancellation from './components/RefundCancellation';
+import TermsConditions from './components/TermsConditions';
+import ContactUs from './components/ContactUs';
 
 // Create a black and white theme
 const theme = createTheme({
@@ -86,10 +91,11 @@ function App() {
                     <Route path="/products" element={<Products />} />
                     <Route path="/my-orders" element={<UserOrders />} />
                     <Route path="/admin" element={<AdminDashboard />} />
-                    <Route path="/shipping-delivery" element={<div>Shipping & Delivery</div>} />
-                    <Route path="/refund-policy" element={<div>Refund & Cancellation Policy</div>} />
-                    <Route path="/terms" element={<div>Terms & Conditions</div>} />
-                    <Route path="/contact" element={<div>Contact Us</div>} />
+                    <Route path="/shipping-delivery" element={<ShippingDelivery/>} />
+                    <Route path="/privacy-policy" element={<PrivacyPolicy/>}/>
+                    <Route path="/refund-policy" element={<RefundCancellation/>} />
+                    <Route path="/terms" element={<TermsConditions/>} />
+                    <Route path="/contact" element={<ContactUs/>} />
                   </Routes>
                 </Container>
                 <Footer />

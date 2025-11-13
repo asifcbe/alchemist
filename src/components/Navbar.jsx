@@ -14,7 +14,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { Store, Login, Logout } from "@mui/icons-material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import alchemistLogo from "../assets/alchemistlogonew.png";
+import alchemistLogo from "../assets/alchemistlogosc.png";
 import { useAuth } from "../context/AuthContext";
 import { auth } from "../firebase/config.js";
 import { signOut } from "firebase/auth";
@@ -95,16 +95,13 @@ const Navbar = () => {
                 src={alchemistLogo}
                 alt="Al Chemist Logo"
                 style={{
-                  height: "50px",
+                  height: "80px",
                   marginRight: "8px",
                   width: "auto",
                   borderRadius: "50%",
-                  transition: "transform 0.3s ease",
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.1)")}
-                onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
               />
-              <Typography
+              {/* <Typography
                 sx={{
                   fontFamily: "'Cinzel Decorative', 'Cormorant Garamond', serif",
                   fontSize: { xs: "1rem", sm: "1.3rem", md: "1.5rem" },
@@ -118,7 +115,7 @@ const Navbar = () => {
                 }}
               >
                 Al-Chemist
-              </Typography>
+              </Typography> */}
             </Box>
 
             {/* User & Shop & Cart */}

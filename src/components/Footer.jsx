@@ -8,6 +8,7 @@ const Footer = () => {
     {
       title: 'Policies',
       links: [
+        { text: 'Privacy Policies', path: '/privacy-policy' },
         { text: 'Shipping & Delivery', path: '/shipping-delivery' },
         { text: 'Refund & Cancellation Policy', path: '/refund-policy' },
         { text: 'Terms & Conditions', path: '/terms' },

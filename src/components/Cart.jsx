@@ -29,7 +29,15 @@ const Cart = ({ open, onClose }) => {
 
   const [name, setName] = useState(currentUser?.displayName || '');
   const [contact, setContact] = useState(currentUser?.phoneNumber || '');
-  const [address, setAddress] = useState('');
+
+  // Detailed address fields
+  const [street, setStreet] = useState('');
+  const [apartment, setApartment] = useState('');
+  const [landmark, setLandmark] = useState('');
+  const [city, setCity] = useState('');
+  const [stateAddr, setStateAddr] = useState('');
+  const [pincode, setPincode] = useState('');
+  const [country, setCountry] = useState('');
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -80,9 +88,30 @@ const Cart = ({ open, onClose }) => {
     ).join('\n');
   };
 
+  // Stitch address fields into one string
+  const getStitchedAddress = () => {
+    return [
+      apartment && `${apartment}`,
+      street && `${street}`,
+      landmark && `Landmark: ${landmark}`,
+      city && `${city}`,
+      stateAddr && `${stateAddr}`,
+      pincode && `Pincode: ${pincode}`,
+      country && `${country}`
+    ].filter(Boolean).join(', ');
+  };
+
   const handleCheckout = () => {
     if (!currentUser || !currentUser.uid) {
       alert("You must be logged in to place an order.");
+      return;
+    }
+
+    const stitchedAddress = getStitchedAddress();
+
+    // Validate required address fields on checkout
+    if (!name || !contact || !street || !city || !stateAddr || !pincode || !country) {
+      alert("Please fill in all required address fields.");
       return;
     }
 
@@ -100,7 +129,7 @@ const Cart = ({ open, onClose }) => {
         const orderData = {
           name,
           contact,
-          address,
+          address: stitchedAddress,
           email: currentUser.email || '',
           cartItems: cart.items,
           subtotal: cart.total,
@@ -127,7 +156,7 @@ const Cart = ({ open, onClose }) => {
         email: currentUser?.email || '',
       },
       notes: {
-        address,
+        address: stitchedAddress,
         order_details: getOrderSummary(),
       },
       theme: {
@@ -275,14 +304,99 @@ const Cart = ({ open, onClose }) => {
                     fontSize: "1rem",
                   }}
                 />
-                <textarea
-                  placeholder="Address"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  rows={3}
+                <input
+                  type="text"
+                  placeholder="Street Address / Area"
+                  value={street}
+                  onChange={(e) => setStreet(e.target.value)}
                   style={{
                     width: "100%",
                     padding: "8px",
+                    marginBottom: "8px",
+                    borderRadius: "4px",
+                    border: "1px solid #ccc",
+                    fontSize: "1rem",
+                  }}
+                />
+                <input
+                  type="text"
+                  placeholder="Apartment / House No."
+                  value={apartment}
+                  onChange={(e) => setApartment(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "8px",
+                    marginBottom: "8px",
+                    borderRadius: "4px",
+                    border: "1px solid #ccc",
+                    fontSize: "1rem",
+                  }}
+                />
+                <input
+                  type="text"
+                  placeholder="Landmark"
+                  value={landmark}
+                  onChange={(e) => setLandmark(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "8px",
+                    marginBottom: "8px",
+                    borderRadius: "4px",
+                    border: "1px solid #ccc",
+                    fontSize: "1rem",
+                  }}
+                />
+                <input
+                  type="text"
+                  placeholder="City"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "8px",
+                    marginBottom: "8px",
+                    borderRadius: "4px",
+                    border: "1px solid #ccc",
+                    fontSize: "1rem",
+                  }}
+                />
+                <input
+                  type="text"
+                  placeholder="State"
+                  value={stateAddr}
+                  onChange={(e) => setStateAddr(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "8px",
+                    marginBottom: "8px",
+                    borderRadius: "4px",
+                    border: "1px solid #ccc",
+                    fontSize: "1rem",
+                  }}
+                />
+                <input
+                  type="text"
+                  placeholder="Pincode"
+                  value={pincode}
+                  onChange={(e) => setPincode(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "8px",
+                    marginBottom: "8px",
+                    borderRadius: "4px",
+                    border: "1px solid #ccc",
+                    fontSize: "1rem",
+                  }}
+                />
+                <input
+                  type="text"
+                  placeholder="Country"
+                  value={country}
+                  onChange={(e) => setCountry(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "8px",
+                    marginBottom: "8px",
                     borderRadius: "4px",
                     border: "1px solid #ccc",
                     fontSize: "1rem",
@@ -309,7 +423,15 @@ const Cart = ({ open, onClose }) => {
                 fullWidth
                 sx={{ bgcolor: "black", py: 1.5, "&:hover": { bgcolor: "#333" } }}
                 onClick={handleCheckout}
-                disabled={!name || !contact || !address}
+                disabled={
+                  !name ||
+                  !contact ||
+                  !street ||
+                  !city ||
+                  !stateAddr ||
+                  !pincode ||
+                  !country
+                }
               >
                 Proceed to Checkout
               </Button>
@@ -318,7 +440,6 @@ const Cart = ({ open, onClose }) => {
         </Box>
       </Drawer>
 
-      {/* Snackbar for success message */}
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={8000}
