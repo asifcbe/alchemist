@@ -7,7 +7,7 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword
 } from 'firebase/auth';
-
+import { getFirestore } from 'firebase/firestore';
 const firebaseConfig = {
   apiKey: "AIzaSyBaNnkiDSMUv26EYndOOIWpbRPts3KKh68",
   authDomain: "alchemist-a02a0.firebaseapp.com",
@@ -23,7 +23,7 @@ const app = initializeApp(firebaseConfig);
 
 // Initialize Firebase Auth
 export const auth = getAuth(app);
-
+export const db = getFirestore(app);  // <-- add this export
 // Initialize Google Auth provider
 export const googleProvider = new GoogleAuthProvider();
 

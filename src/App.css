@@ -4,8 +4,14 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  color:black;
 }
-
+.carousel h5,p {
+  color:#ffffff;
+ }
+ p{
+  color:#000000;
+ }
 html, body {
   width: 100%;
   overflow-x: hidden;
@@ -81,4 +87,7 @@ html, body {
 
 .read-the-docs {
   color: #888;
+}
+.app{
+  background-color: white;
 }

@@ -8,6 +8,7 @@ const Footer = () => {
     {
       title: 'Policies',
       links: [
+        { text: 'Privacy Policies', path: '/privacy-policy' },
         { text: 'Shipping & Delivery', path: '/shipping-delivery' },
         { text: 'Refund & Cancellation Policy', path: '/refund-policy' },
         { text: 'Terms & Conditions', path: '/terms' },
@@ -22,7 +23,7 @@ const Footer = () => {
       sx={{
         bgcolor: 'transparent',
         borderTop: '1px solid rgba(0, 0, 0, 0.1)',
-        mt: 'auto',
+        mt: '30px',
         py: 4,
       }}
     >

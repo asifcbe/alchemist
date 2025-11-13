@@ -10,6 +10,8 @@ import {
   Divider,
   ToggleButtonGroup,
   ToggleButton,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -17,24 +19,40 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { useCart } from "../context/CartContext";
 import { shippingCost } from "../config/products";
-import { useAuth } from '../context/AuthContext'; // Adjust as per your path
+import { useAuth } from '../context/AuthContext';
+import { db } from '../firebase/config';
+import { collection, addDoc, Timestamp } from "firebase/firestore";
 
 const Cart = ({ open, onClose }) => {
   const { cart, dispatch } = useCart();
   const { currentUser } = useAuth();
 
-  // Init checkout info with currentUser data if available
   const [name, setName] = useState(currentUser?.displayName || '');
   const [contact, setContact] = useState(currentUser?.phoneNumber || '');
-  const [address, setAddress] = useState('');
-  
-  // Update name/email if currentUser changes
+
+  // Detailed address fields
+  const [street, setStreet] = useState('');
+  const [apartment, setApartment] = useState('');
+  const [landmark, setLandmark] = useState('');
+  const [city, setCity] = useState('');
+  const [stateAddr, setStateAddr] = useState('');
+  const [pincode, setPincode] = useState('');
+  const [country, setCountry] = useState('');
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+
   useEffect(() => {
     if (currentUser) {
       if (!name) setName(currentUser.displayName || '');
       if (!contact) setContact(currentUser.phoneNumber || '');
     }
-  }, [currentUser]); 
+  }, [currentUser]);
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+    setSnackbarMessage('');
+  };
 
   const handleQuantityChange = (variantId, newQuantity) => {
     if (newQuantity < 1) return;
@@ -43,7 +61,6 @@ const Cart = ({ open, onClose }) => {
 
   const handleSizeChange = (item, newSize) => {
     if (!newSize || newSize === item.size) return;
-
     const newVariant = item.variants.find((v) => v.size === newSize);
     if (!newVariant) return;
 
@@ -65,25 +82,73 @@ const Cart = ({ open, onClose }) => {
     dispatch({ type: "REMOVE_FROM_CART", payload: variantId });
   };
 
-  // Create order summary string for notes
   const getOrderSummary = () => {
     return cart.items.map(item =>
       `${item.name} (${item.size}ml) x${item.quantity} = ₹${(item.price * item.quantity).toFixed(2)}`
     ).join('\n');
   };
 
+  // Stitch address fields into one string
+  const getStitchedAddress = () => {
+    return [
+      apartment && `${apartment}`,
+      street && `${street}`,
+      landmark && `Landmark: ${landmark}`,
+      city && `${city}`,
+      stateAddr && `${stateAddr}`,
+      pincode && `Pincode: ${pincode}`,
+      country && `${country}`
+    ].filter(Boolean).join(', ');
+  };
+
   const handleCheckout = () => {
+    if (!currentUser || !currentUser.uid) {
+      alert("You must be logged in to place an order.");
+      return;
+    }
+
+    const stitchedAddress = getStitchedAddress();
+
+    // Validate required address fields on checkout
+    if (!name || !contact || !street || !city || !stateAddr || !pincode || !country) {
+      alert("Please fill in all required address fields.");
+      return;
+    }
+
     const amountInPaise = (cart.total + shippingCost) * 100;
 
     const options = {
-      key: "rzp_test_RcwXpoEfiNBcVI", // replace with your Razorpay key id
+      key: "rzp_test_RcwXpoEfiNBcVI",
       amount: amountInPaise.toFixed(0),
       currency: "INR",
       name: "Al-Chemist",
       description: "Order Payment",
-      handler(response) {
-        alert(`Payment successful. Payment ID: ${response.razorpay_payment_id}`);
-        // implement post-payment actions here
+      handler: async (response) => {
+        const userOrdersCollection = collection(db, "users", currentUser.uid, "orders");
+
+        const orderData = {
+          name,
+          contact,
+          address: stitchedAddress,
+          email: currentUser.email || '',
+          cartItems: cart.items,
+          subtotal: cart.total,
+          shippingCost,
+          total: cart.total + shippingCost,
+          paymentId: response.razorpay_payment_id,
+          createdAt: Timestamp.now(),
+        };
+
+        try {
+          const docRef = await addDoc(userOrdersCollection, orderData);
+          setSnackbarMessage(`Order placed successfully! Order ID: ${docRef.id}, Payment ID: ${response.razorpay_payment_id}`);
+          setSnackbarOpen(true);
+
+          dispatch({ type: "CLEAR_CART" });
+          onClose();
+        } catch (error) {
+          alert("Failed to save order: " + error.message);
+        }
       },
       prefill: {
         name,
@@ -91,7 +156,7 @@ const Cart = ({ open, onClose }) => {
         email: currentUser?.email || '',
       },
       notes: {
-        address,
+        address: stitchedAddress,
         order_details: getOrderSummary(),
       },
       theme: {
@@ -100,6 +165,7 @@ const Cart = ({ open, onClose }) => {
     };
 
     const rzp = new window.Razorpay(options);
+
     rzp.on("payment.failed", function (response) {
       alert("Payment failed: " + response.error.description);
     });
@@ -108,182 +174,283 @@ const Cart = ({ open, onClose }) => {
   };
 
   return (
-    <Drawer anchor="right" open={open} onClose={onClose}>
-      <Box sx={{ width: 300, p: 3 }}>
-        {/* Header */}
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
-          <Typography variant="h5" sx={{ fontFamily: "'Cormorant Garamond', serif" }}>
-            Shopping Cart
-          </Typography>
-          <IconButton onClick={onClose}>
-            <CloseIcon />
-          </IconButton>
-        </Box>
+    <>
+      <Drawer anchor="right" open={open} onClose={onClose}>
+        <Box sx={{ width: 300, p: 3 }}>
+          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+            <Typography variant="h5" sx={{ fontFamily: "'Cormorant Garamond', serif" }}>
+              Shopping Cart
+            </Typography>
+            <IconButton onClick={onClose}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
 
-        <Divider sx={{ mb: 3 }} />
+          <Divider sx={{ mb: 3 }} />
 
-        {/* Cart content */}
-        {cart.items.length === 0 ? (
-          <Typography variant="body1" sx={{ textAlign: "center", mt: 4 }}>
-            Your cart is empty
-          </Typography>
-        ) : (
-          <>
-            <List>
-              {cart.items.map((item) => (
-                <Paper key={item.variantId} elevation={0} sx={{ mb: 2, p: 2, borderRadius: 2, bgcolor: "#f8f8f8" }}>
-                  <Box sx={{ display: "flex", gap: 2 }}>
-                    <img
-                      src={item.imageUrl}
-                      alt={item.name}
-                      style={{ width: 80, height: 80, objectFit: "cover", borderRadius: 8 }}
-                    />
-                    <Box sx={{ flex: 1 }}>
-                      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                        <Box>
-                          <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>{item.name}</Typography>
-                          <Box sx={{ mt: 1 }}>
-                            <ToggleButtonGroup
-                              value={item.size}
-                              exclusive
-                              size="small"
-                              onChange={(e, newSize) => handleSizeChange(item, newSize)}
-                            >
-                              {item.variants.map((variant) => (
-                                <ToggleButton
-                                  key={variant.size}
-                                  value={variant.size}
-                                  sx={{
-                                    px: 1,
-                                    "&.Mui-selected": {
-                                      bgcolor: "black",
-                                      color: "white",
-                                      "&:hover": { bgcolor: "#333" },
-                                    },
-                                  }}
-                                >
-                                  {variant.size}ml
-                                </ToggleButton>
-                              ))}
-                            </ToggleButtonGroup>
+          {cart.items.length === 0 ? (
+            <Typography variant="body1" sx={{ textAlign: "center", mt: 4 }}>
+              Your cart is empty
+            </Typography>
+          ) : (
+            <>
+              <List>
+                {cart.items.map((item) => (
+                  <Paper key={item.variantId} elevation={0} sx={{ mb: 2, p: 2, borderRadius: 2, bgcolor: "#f8f8f8" }}>
+                    <Box sx={{ display: "flex", gap: 2 }}>
+                      <img
+                        src={item.imageUrl}
+                        alt={item.name}
+                        style={{ width: 80, height: 80, objectFit: "cover", borderRadius: 8 }}
+                      />
+                      <Box sx={{ flex: 1 }}>
+                        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                          <Box>
+                            <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>{item.name}</Typography>
+                            <Box sx={{ mt: 1 }}>
+                              <ToggleButtonGroup
+                                value={item.size}
+                                exclusive
+                                size="small"
+                                onChange={(e, newSize) => handleSizeChange(item, newSize)}
+                              >
+                                {item.variants.map((variant) => (
+                                  <ToggleButton
+                                    key={variant.size}
+                                    value={variant.size}
+                                    sx={{
+                                      px: 1,
+                                      "&.Mui-selected": {
+                                        bgcolor: "black",
+                                        color: "white",
+                                        "&:hover": { bgcolor: "#333" },
+                                      },
+                                    }}
+                                  >
+                                    {variant.size}ml
+                                  </ToggleButton>
+                                ))}
+                              </ToggleButtonGroup>
+                            </Box>
                           </Box>
-                        </Box>
-                        <IconButton size="small" onClick={() => handleRemoveItem(item.variantId)} sx={{ color: "error.main" }}>
-                          <DeleteIcon />
-                        </IconButton>
-                      </Box>
-                      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mt: 2 }}>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            bgcolor: "white",
-                            borderRadius: 1,
-                            border: "1px solid rgba(0,0,0,0.23)",
-                          }}
-                        >
-                          <IconButton
-                            size="small"
-                            onClick={() => handleQuantityChange(item.variantId, item.quantity - 1)}
-                            sx={{ p: 0.5 }}
-                            disabled={item.quantity <= 1}
-                          >
-                            <RemoveIcon fontSize="small" />
-                          </IconButton>
-                          <Typography sx={{ px: 2, minWidth: "30px", textAlign: "center" }}>{item.quantity}</Typography>
-                          <IconButton
-                            size="small"
-                            onClick={() => handleQuantityChange(item.variantId, item.quantity + 1)}
-                            sx={{ p: 0.5 }}
-                          >
-                            <AddIcon fontSize="small" />
+                          <IconButton size="small" onClick={() => handleRemoveItem(item.variantId)} sx={{ color: "error.main" }}>
+                            <DeleteIcon />
                           </IconButton>
                         </Box>
-                        <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
-                          ₹{(item.price * item.quantity).toFixed(2)}
-                        </Typography>
+                        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mt: 2 }}>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              bgcolor: "white",
+                              borderRadius: 1,
+                              border: "1px solid rgba(0,0,0,0.23)",
+                            }}
+                          >
+                            <IconButton
+                              size="small"
+                              onClick={() => handleQuantityChange(item.variantId, item.quantity - 1)}
+                              sx={{ p: 0.5 }}
+                              disabled={item.quantity <= 1}
+                            >
+                              <RemoveIcon fontSize="small" />
+                            </IconButton>
+                            <Typography sx={{ px: 2, minWidth: "30px", textAlign: "center" }}>{item.quantity}</Typography>
+                            <IconButton
+                              size="small"
+                              onClick={() => handleQuantityChange(item.variantId, item.quantity + 1)}
+                              sx={{ p: 0.5 }}
+                            >
+                              <AddIcon fontSize="small" />
+                            </IconButton>
+                          </Box>
+                          <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
+                            ₹{(item.price * item.quantity).toFixed(2)}
+                          </Typography>
+                        </Box>
                       </Box>
                     </Box>
-                  </Box>
-                </Paper>
-              ))}
-            </List>
+                  </Paper>
+                ))}
+              </List>
 
-            {/* Checkout details */}
-            <Box sx={{ mb: 3 }}>
-              <Typography variant="h6" sx={{ mb: 1 }}>Checkout Details</Typography>
-              <input
-                type="text"
-                placeholder="Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                style={{
-                  width: "100%",
-                  padding: "8px",
-                  marginBottom: "8px",
-                  borderRadius: "4px",
-                  border: "1px solid #ccc",
-                  fontSize: "1rem",
-                }}
-              />
-              <input
-                type="tel"
-                placeholder="Contact Number"
-                value={contact}
-                onChange={(e) => setContact(e.target.value)}
-                style={{
-                  width: "100%",
-                  padding: "8px",
-                  marginBottom: "8px",
-                  borderRadius: "4px",
-                  border: "1px solid #ccc",
-                  fontSize: "1rem",
-                }}
-              />
-              <textarea
-                placeholder="Address"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                rows={3}
-                style={{
-                  width: "100%",
-                  padding: "8px",
-                  borderRadius: "4px",
-                  border: "1px solid #ccc",
-                  fontSize: "1rem",
-                }}
-              />
-            </Box>
+              <Box sx={{ mb: 3 }}>
+                <Typography variant="h6" sx={{ mb: 1 }}>Checkout Details</Typography>
+                <input
+                  type="text"
+                  placeholder="Name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "8px",
+                    marginBottom: "8px",
+                    borderRadius: "4px",
+                    border: "1px solid #ccc",
+                    fontSize: "1rem",
+                  }}
+                />
+                <input
+                  type="tel"
+                  placeholder="Contact Number"
+                  value={contact}
+                  onChange={(e) => setContact(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "8px",
+                    marginBottom: "8px",
+                    borderRadius: "4px",
+                    border: "1px solid #ccc",
+                    fontSize: "1rem",
+                  }}
+                />
+                <input
+                  type="text"
+                  placeholder="Street Address / Area"
+                  value={street}
+                  onChange={(e) => setStreet(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "8px",
+                    marginBottom: "8px",
+                    borderRadius: "4px",
+                    border: "1px solid #ccc",
+                    fontSize: "1rem",
+                  }}
+                />
+                <input
+                  type="text"
+                  placeholder="Apartment / House No."
+                  value={apartment}
+                  onChange={(e) => setApartment(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "8px",
+                    marginBottom: "8px",
+                    borderRadius: "4px",
+                    border: "1px solid #ccc",
+                    fontSize: "1rem",
+                  }}
+                />
+                <input
+                  type="text"
+                  placeholder="Landmark"
+                  value={landmark}
+                  onChange={(e) => setLandmark(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "8px",
+                    marginBottom: "8px",
+                    borderRadius: "4px",
+                    border: "1px solid #ccc",
+                    fontSize: "1rem",
+                  }}
+                />
+                <input
+                  type="text"
+                  placeholder="City"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "8px",
+                    marginBottom: "8px",
+                    borderRadius: "4px",
+                    border: "1px solid #ccc",
+                    fontSize: "1rem",
+                  }}
+                />
+                <input
+                  type="text"
+                  placeholder="State"
+                  value={stateAddr}
+                  onChange={(e) => setStateAddr(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "8px",
+                    marginBottom: "8px",
+                    borderRadius: "4px",
+                    border: "1px solid #ccc",
+                    fontSize: "1rem",
+                  }}
+                />
+                <input
+                  type="text"
+                  placeholder="Pincode"
+                  value={pincode}
+                  onChange={(e) => setPincode(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "8px",
+                    marginBottom: "8px",
+                    borderRadius: "4px",
+                    border: "1px solid #ccc",
+                    fontSize: "1rem",
+                  }}
+                />
+                <input
+                  type="text"
+                  placeholder="Country"
+                  value={country}
+                  onChange={(e) => setCountry(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "8px",
+                    marginBottom: "8px",
+                    borderRadius: "4px",
+                    border: "1px solid #ccc",
+                    fontSize: "1rem",
+                  }}
+                />
+              </Box>
 
-            {/* Price summary */}
-            <Divider sx={{ mb: 3 }} />
-            <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
-              <Typography variant="subtitle1">Subtotal</Typography>
-              <Typography variant="subtitle1">₹{cart.total.toFixed(2)}</Typography>
-            </Box>
-            <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
-              <Typography variant="subtitle1">Shipping</Typography>
-              <Typography variant="subtitle1" color="success.main">₹{shippingCost}</Typography>
-            </Box>
-            <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
-              <Typography variant="h6">Total</Typography>
-              <Typography variant="h6">₹{cart.total + shippingCost}</Typography>
-            </Box>
+              <Divider sx={{ mb: 3 }} />
+              <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
+                <Typography variant="subtitle1">Subtotal</Typography>
+                <Typography variant="subtitle1">₹{cart.total.toFixed(2)}</Typography>
+              </Box>
+              <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
+                <Typography variant="subtitle1">Shipping</Typography>
+                <Typography variant="subtitle1" color="success.main">₹{shippingCost}</Typography>
+              </Box>
+              <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
+                <Typography variant="h6">Total</Typography>
+                <Typography variant="h6">₹{cart.total + shippingCost}</Typography>
+              </Box>
 
-            {/* Checkout button */}
-            <Button
-              variant="contained"
-              fullWidth
-              sx={{ bgcolor: "black", py: 1.5, "&:hover": { bgcolor: "#333" } }}
-              onClick={handleCheckout}
-              disabled={!name || !contact || !address}
-            >
-              Proceed to Checkout
-            </Button>
-          </>
-        )}
-      </Box>
-    </Drawer>
+              <Button
+                variant="contained"
+                fullWidth
+                sx={{ bgcolor: "black", py: 1.5, "&:hover": { bgcolor: "#333" } }}
+                onClick={handleCheckout}
+                disabled={
+                  !name ||
+                  !contact ||
+                  !street ||
+                  !city ||
+                  !stateAddr ||
+                  !pincode ||
+                  !country
+                }
+              >
+                Proceed to Checkout
+              </Button>
+            </>
+          )}
+        </Box>
+      </Drawer>
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={8000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }} variant="filled">
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+    </>
   );
 };
 
